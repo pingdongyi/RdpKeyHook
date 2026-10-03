@@ -1,6 +1,6 @@
 <div align="center">
 
-# OplusKeyHook v1.4
+# OplusKeyHook v1.5
 
 **一款针对搭载ColorOS且配备快捷键的手机进行功能自定义的模块**
 
@@ -24,6 +24,7 @@
 - 支持调用自定义Url Scheme [自定义UrlScheme教程](https://github.com/siowu/OplusKeyHook/blob/main/docs/%E8%87%AA%E5%AE%9A%E4%B9%89UrlScheme%E6%95%99%E7%A8%8B.md) 
 - 支持执行Shell命令 
 - 支持自定义是否震动反馈、息屏状态下是否执行，并亮屏等待解锁
+- 支持远程桌面类应用（Microsoft 远程桌面 / Windows App 等）键盘直通，解决 Win 键、Alt+Tab 等被系统拦截导致远端 Windows 快捷键失效的问题
 
 ## 🚀使用教程
 
@@ -40,6 +41,7 @@
 
 ## 📝更新日志
 
+v1.5 新增远程桌面应用键盘直通，Windows App / Microsoft 远程桌面可用完整快捷键（Win、Alt+Tab、Win+Space 等）
 v1.4 优化Shell命令执行方案，解决因后台限制导致的命令执行失败或延迟  
 v1.3 新增支持执行自定义Shell命令  
 v1.2 新增支持小布快捷指令、一键闪记、小布记忆  
