@@ -55,6 +55,10 @@ public class RdpKeyboardHook {
     /** 系统进程里的 WindowManagerPolicy 引用，用于快速读取当前前台应用。 */
     private static volatile Object sPolicy;
 
+    /** 开机完成状态：0=未知，1=已开机。仅在确认未开机时跳过处理。 */
+    private static volatile int sBootState = 0;
+    private static volatile Class<?> sSystemProperties;
+
     public void handleLoadPackage(XC_LoadPackage.LoadPackageParam lpparam) {
         if (!"android".equals(lpparam.packageName)) {
             return;
@@ -148,26 +152,31 @@ public class RdpKeyboardHook {
             XC_MethodHook callback = new XC_MethodHook() {
                 @Override
                 protected void beforeHookedMethod(MethodHookParam param) {
-                    if (!handleMethodCall(param)) {
-                        return;
-                    }
-                    // interceptKeyBeforeDispatching -> 0（立即分发）
-                    // interceptKeyBeforeQueueing   -> ACTION_PASS_TO_USER
-                    // dispatchUnhandledKey         -> null（不做系统兜底）
-                    // switchKeyboardLayout 等      -> null（不切换）
-                    String name = getMethodName(param);
-                    if (name == null) {
-                        return;
-                    }
-                    if (name.equals("interceptKeyBeforeDispatching")
-                            || name.equals("overrideInterceptKeyBeforeDispatching")) {
-                        param.setResult(0L);
-                    } else if (name.equals("interceptKeyBeforeQueueing")
-                            || name.equals("overrideInterceptKeyBeforeQueueing")) {
-                        param.setResult(ACTION_PASS_TO_USER);
-                    } else {
-                        // dispatchUnhandledKey / handleSwitchKeyboardLayout / sendSwitchKeyboardLayout
-                        param.setResult(null);
+                    try {
+                        if (!handleMethodCall(param)) {
+                            return;
+                        }
+                        // interceptKeyBeforeDispatching -> 0（立即分发）
+                        // interceptKeyBeforeQueueing   -> ACTION_PASS_TO_USER
+                        // dispatchUnhandledKey         -> null（不做系统兜底）
+                        // switchKeyboardLayout 等      -> null（不切换）
+                        String name = getMethodName(param);
+                        if (name == null) {
+                            return;
+                        }
+                        if (name.equals("interceptKeyBeforeDispatching")
+                                || name.equals("overrideInterceptKeyBeforeDispatching")) {
+                            param.setResult(0L);
+                        } else if (name.equals("interceptKeyBeforeQueueing")
+                                || name.equals("overrideInterceptKeyBeforeQueueing")) {
+                            param.setResult(ACTION_PASS_TO_USER);
+                        } else {
+                            // dispatchUnhandledKey / handleSwitchKeyboardLayout / sendSwitchKeyboardLayout
+                            param.setResult(null);
+                        }
+                    } catch (Throwable t) {
+                        // 绝不让本模块的异常影响系统输入流程：出错时保持原方法原有行为
+                        log("hook callback error: " + t);
                     }
                 }
             };
@@ -189,6 +198,11 @@ public class RdpKeyboardHook {
 
     /** 返回 true 表示命中目标应用，需要放行该按键。 */
     private boolean handleMethodCall(XC_MethodHook.MethodHookParam param) {
+        // 开机完成前不做任何干预，确保绝不影响开机流程
+        if (!isSystemBooted()) {
+            return false;
+        }
+
         String name = getMethodName(param);
         if (name == null) {
             return false;
@@ -219,6 +233,36 @@ public class RdpKeyboardHook {
     // ------------------------------------------------------------------
     // 工具方法
     // ------------------------------------------------------------------
+
+    /**
+     * 是否已经开机完成。
+     *
+     * <p>开机过程中 {@code sys.boot_completed} 为空，此时直接跳过所有处理，
+     * 保证模块绝不会干预开机阶段的按键/输入分发。
+     * 若属性读取异常，则按“已开机”处理（fail-open），避免误伤正常功能。
+     */
+    private static boolean isSystemBooted() {
+        if (sBootState == 1) {
+            return true;
+        }
+        try {
+            Class<?> sp = sSystemProperties;
+            if (sp == null) {
+                sp = XposedHelpers.findClass("android.os.SystemProperties", null);
+                sSystemProperties = sp;
+            }
+            Object value = XposedHelpers.callStaticMethod(sp, "get", "sys.boot_completed");
+            String booted = (value == null) ? "" : value.toString();
+            if (booted.isEmpty()) {
+                return false;
+            }
+            sBootState = 1;
+            return true;
+        } catch (Throwable t) {
+            sBootState = 1;
+            return true;
+        }
+    }
 
     private static String getMethodName(XC_MethodHook.MethodHookParam param) {
         try {
