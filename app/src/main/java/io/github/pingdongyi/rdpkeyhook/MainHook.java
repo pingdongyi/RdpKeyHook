@@ -1,8 +1,8 @@
-package me.siowu.OplusKeyHook;
+package io.github.pingdongyi.rdpkeyhook;
 
 import de.robv.android.xposed.IXposedHookLoadPackage;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
-import me.siowu.OplusKeyHook.hooks.RdpKeyboardHook;
+import io.github.pingdongyi.rdpkeyhook.hooks.RdpKeyboardHook;
 
 /**
  * 模块入口：只做一件事——让远程桌面类应用的硬件键盘事件不被系统拦截。

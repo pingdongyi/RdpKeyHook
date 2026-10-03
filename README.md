@@ -26,6 +26,8 @@
 
 > 无界面、无额外功耗，只在目标应用前台时生效。
 
+> 模块包名：`io.github.pingdongyi.rdpkeyhook`
+
 ## 📦 支持的应用
 
 默认白名单（可在 `RdpKeyboardHook#TARGET_PACKAGES` 中增删）：
@@ -83,8 +85,8 @@ com.android.server.policy.PhoneWindowManager    ← Hook：兜底 + 键盘布局
 Release 并附带 APK。例如：
 
 ```bash
-git tag -a v1.6 -m "v1.6"
-git push origin v1.6
+git tag -a v1.7 -m "v1.7"
+git push origin v1.7
 ```
 
 ## 📄 致谢

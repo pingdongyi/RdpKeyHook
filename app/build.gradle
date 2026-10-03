@@ -21,15 +21,15 @@ android {
         }
     }
 
-    namespace 'me.siowu.OplusKeyHook'
+    namespace 'io.github.pingdongyi.rdpkeyhook'
     compileSdk 35
 
     defaultConfig {
-        applicationId "me.siowu.OplusKeyHook"
+        applicationId "io.github.pingdongyi.rdpkeyhook"
         minSdk 24
         targetSdk 35
-        versionCode 6
-        versionName "1.6"
+        versionCode 7
+        versionName "1.7"
     }
 
     compileOptions {

@@ -1,4 +1,4 @@
-package me.siowu.OplusKeyHook.hooks;
+package io.github.pingdongyi.rdpkeyhook.hooks;
 
 import android.content.ComponentName;
 import android.os.SystemClock;
@@ -31,7 +31,7 @@ import de.robv.android.xposed.callbacks.XC_LoadPackage;
  */
 public class RdpKeyboardHook {
 
-    private static final String TAG = "OplusKeyHook/RdpKey";
+    private static final String TAG = "RdpKeyHook";
     private static final boolean DEBUG = true;
 
     /** WindowManagerPolicyConstants.ACTION_PASS_TO_USER */
