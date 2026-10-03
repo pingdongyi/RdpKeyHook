@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- 只需要系统框架进程即可拦截系统级按键分发 -->
     <string-array name="xposed_scope">
         <item>android</item>
-        <item>com.coloros.shortcuts</item>
     </string-array>
 </resources>

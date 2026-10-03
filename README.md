@@ -1,61 +1,96 @@
 <div align="center">
 
-# OplusKeyHook v1.5
+# 远程桌面键盘直通
 
-**一款针对搭载ColorOS且配备快捷键的手机进行功能自定义的模块**
+**让远程桌面类应用（Windows App / Microsoft 远程桌面 等）在前台时可以使用完整的硬件键盘快捷键**
 
-[![GitHub release](https://img.shields.io/github/v/release/Xposed-Modules-Repo/me.siowu.OplusKeyHook?style=flat-square)](https://github.com/Xposed-Modules-Repo/me.siowu.OplusKeyHook/releases)
-[![GitHub stars](https://img.shields.io/github/stars/siowu/OplusKeyHook?style=flat-square&color=yellow)](https://github.com/Xposed-Modules-Repo/me.siowu.OplusKeyHook/stargazers)
-<a href="https://github.com/siowu/OplusKeyHook">
-        <img src="https://img.shields.io/badge/Github-OplusKeyHook-yellow.svg" alt="socialify"/>
-</a>
 </div>
 
 ---
 
-本模块通过Hook原生系统按键监听逻辑，实现快捷键的事件拦截，无额外功率消耗
+## ✨ 功能
 
-## ✨核心功能
+在 Android / ColorOS 上使用外接键盘连接远程桌面时，一部分 Windows 快捷键会被系统层拦截，
+根本不会转发到远端 Windows，例如：
 
-- 支持给短按、双击、长按单独设置功能
-- 支持一键设置成打开微信/支付宝付款码、扫一扫
-- 支持执行小布快捷指令、一键闪记、小布记忆等常用功能 [获取小布快捷指令ID教程](https://github.com/siowu/OplusKeyHook/blob/main/docs/%E8%8E%B7%E5%8F%96%E5%B0%8F%E5%B8%83%E5%BF%AB%E6%8D%B7%E6%8C%87%E4%BB%A4ID%E6%95%99%E7%A8%8B.md)
-- 支持打开自定义Activity [自定义Activity教程](https://github.com/siowu/OplusKeyHook/blob/main/docs/%E8%87%AA%E5%AE%9A%E4%B9%89Activity%E6%95%99%E7%A8%8B.md) 
-- 支持调用自定义Url Scheme [自定义UrlScheme教程](https://github.com/siowu/OplusKeyHook/blob/main/docs/%E8%87%AA%E5%AE%9A%E4%B9%89UrlScheme%E6%95%99%E7%A8%8B.md) 
-- 支持执行Shell命令 
-- 支持自定义是否震动反馈、息屏状态下是否执行，并亮屏等待解锁
-- 支持远程桌面类应用（Microsoft 远程桌面 / Windows App 等）键盘直通，解决 Win 键、Alt+Tab 等被系统拦截导致远端 Windows 快捷键失效的问题
+| 按键 | Android 系统默认行为 |
+| ---- | -------------------- |
+| 单独按 `Win`(⊞ / Meta) | 打开最近任务 |
+| `Alt + Tab` | 打开最近任务 |
+| `Win + Space` / `Alt + Shift` | 切换输入法 / 键盘布局 |
+| `Home` / `AppSwitch` | 回桌面 / 最近任务 |
+| ColorOS 自定义多媒体键盘按键 | 打开全局搜索等 |
 
-## 🚀使用教程
+本模块在系统框架进程中 Hook 输入分发链路，当**远程桌面应用位于前台**时直接放行按键，
+让远端 Windows 收到完整的组合键；其它应用不受影响，电源键与音量键保持系统行为。
 
-1. 设备需安装Xposed环境并激活本模块
-2. 将作用域勾选为「系统框架」
-3. 重启手机，打开模块选择需要定义的功能，保存即可立即生效  
-   *注：仅首次激活和更新模块需要重启，后续在模块中修改按键功能无需重启*
+> 无界面、无额外功耗，只在目标应用前台时生效。
 
-## 🎯后续规划
+## 📦 支持的应用
 
-当前为初步版本，后续可能加入以下功能：<br>
-~~1. 区分单击、长按、双击的单独功能设置~~ (v1.1版本已实现)<br>
-~~2. 支持执行自定义Shell命令~~ (v1.3版本已实现)<br>
+默认白名单（可在 `RdpKeyboardHook#TARGET_PACKAGES` 中增删）：
 
-## 📝更新日志
+- `com.microsoft.rdc.androidx`（Windows App / 新版 Microsoft 远程桌面）
+- `com.microsoft.rdc.android`（旧版 Microsoft Remote Desktop）
+- `com.microsoft.rdc.android.beta`
+- `de.freerdp.afreerdp`、`com.freerdp.afreerdp`（FreeRDP）
+- `com.realvnc.viewer.android`（RealVNC）
 
-v1.5 新增远程桌面应用键盘直通，Windows App / Microsoft 远程桌面可用完整快捷键（Win、Alt+Tab、Win+Space 等）
-v1.4 优化Shell命令执行方案，解决因后台限制导致的命令执行失败或延迟  
-v1.3 新增支持执行自定义Shell命令  
-v1.2 新增支持小布快捷指令、一键闪记、小布记忆  
-v1.1 新增区分短按、双击、长按功能
+## 🚀 使用
 
-## 📄 贡献
+1. 设备已安装 Xposed / LSPosed 环境；
+2. 将本模块作用域勾选为「系统框架（android）」；
+3. 首次激活重启一次手机；
+4. 打开远程桌面应用，外接键盘即可正常使用 `Win`、`Alt+Tab`、`Win+Space` 等快捷键。
 
-欢迎提交 [Issues](https://github.com/siowu/OplusKeyHook/issues) 与 [PRs](https://github.com/siowu/OplusKeyHook/pulls)！如果你希望适配更多应用或扩展功能，欢迎共建
+## 🔧 实现原理
 
-使用中若有问题或建议，可通过以下方式反馈：
-酷安: [@西瓜味的奥利奥](https://www.coolapk.com/u/1068187) 
-Github: [@siowu](https://github.com/siowu/OplusKeyHook)
+```
+InputDispatcher (native)
+      │
+      ▼
+com.android.server.wm.InputManagerCallback      ← Hook：最可靠的单点
+      │  interceptKeyBeforeQueueing / interceptKeyBeforeDispatching
+      ▼
+com.android.server.policy.PhoneWindowManager    ← Hook：兜底 + 键盘布局切换
+      ▼
+前台应用（com.microsoft.rdc.androidx）
+```
 
-提交反馈时，请附：系统版本、设备信息、模块版本、复现步骤及日志要点，便于快速定位与修复。
+前台应用命中白名单时：
+
+- `interceptKeyBeforeQueueing` 返回 `ACTION_PASS_TO_USER`（放行给应用）
+- `interceptKeyBeforeDispatching` 返回 `0`（立即分发）
+- `dispatchUnhandledKey` 返回 `null`（不做系统兜底）
+- `handleSwitchKeyboardLayout` / `sendSwitchKeyboardLayout` 直接短路
+
+前台包名优先读取 `PhoneWindowManager.mDefaultDisplayPolicy.mFocusedApp`（无锁、开销极小），
+失败时回退到 `ActivityTaskManager.getFocusedRootTaskInfo()`。
+
+更详细的说明见 [docs/远程桌面键盘直通说明.md](docs/远程桌面键盘直通说明.md)。
+
+## 🏗️ 构建
+
+本地构建（Android Studio 或命令行）：
+
+```bash
+./gradlew assembleRelease
+```
+
+产物：`app/build/outputs/apk/release/app-release.apk`。
+
+仓库自带 GitHub Actions：push 到 `main` 会编译并上传 Artifact；push `v*` 标签会自动创建
+Release 并附带 APK。例如：
+
+```bash
+git tag -a v1.6 -m "v1.6"
+git push origin v1.6
+```
+
+## 📄 致谢
+
+- 项目结构与 Xposed 脚手架参考自 [siowu/OplusKeyHook](https://github.com/siowu/OplusKeyHook)。
+- 本模块仅保留「远程桌面键盘直通」功能。
 
 ## 🛡️ 免责声明
 
