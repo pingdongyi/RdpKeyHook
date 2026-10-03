@@ -85,8 +85,8 @@ com.android.server.policy.PhoneWindowManager    ← Hook：兜底 + 键盘布局
 Release 并附带 APK。例如：
 
 ```bash
-git tag -a v1.7 -m "v1.7"
-git push origin v1.7
+git tag -a v1.8 -m "v1.8"
+git push origin v1.8
 ```
 
 ## 📄 致谢
